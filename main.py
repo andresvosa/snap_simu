@@ -13,12 +13,12 @@ def main() -> None:
         while True:
             # Perform some operations with plc
             # Example: plc.read_data() or plc.write_data()
-            km1_coil: bool = plc.read_output(0, 0)
-            km2_coil: bool = plc.read_output(0, 1)
+            km1_coil: bool = plc.read_output(0, 0) or False
+            km2_coil: bool = plc.read_output(0, 1) or False
             print(km1_coil, km2_coil)
             time.sleep(1)
     except KeyboardInterrupt:
-        print("Interrupted by user, shutting down.")
+        print("\nInterrupted by user, shutting down.")
     except Exception as e:
         print(f"An error occurred: {e}")
     finally:

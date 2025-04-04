@@ -1,4 +1,5 @@
 import snap7
+from snap7 import util
 import logging
 import re
 
@@ -51,13 +52,13 @@ class Plc:
         :param new_value: Boolean value to write
         """
         try:
-            data = self.plc.read_area(snap7.types.Areas.PE, 0, plc_byte, 1)
+            data = self.plc.read_area(snap7.type.Areas.PE, 0, plc_byte, 1)
             snap7.util.set_bool(data, 0, plc_bit, new_value)
-            self.plc.write_area(snap7.types.Areas.PE, 0, plc_byte, data)
+            self.plc.write_area(snap7.type.Areas.PE, 0, plc_byte, data)
             logging.info(f"Input written: byte={plc_byte}, bit={plc_bit}, value={new_value}")
         except Exception as e:
             logging.error(f"Error writing input to PLC: {e}")
-
+            
     def read_output(self, plc_byte, plc_bit):
         """
         Reads a boolean value from the PLC output.
@@ -67,7 +68,7 @@ class Plc:
         :return: Boolean value read
         """
         try:
-            data = self.plc.read_area(snap7.types.Areas.PA, 0, plc_byte, 1)
+            data = self.plc.read_area(snap7.type.Areas.PA, 0, plc_byte, 1)
             value = snap7.util.get_bool(data, 0, plc_bit)
             logging.info(f"Output read: byte={plc_byte}, bit={plc_bit}, value={value}")
             return value
@@ -95,7 +96,7 @@ class Plc:
                 logging.error(f"Invalid size: {size}. Size must be 2 or 4 bytes.")
                 return
         
-            self.plc.write_area(snap7.types.Areas.PE, 0, start_byte, data)
+            self.plc.write_area(snap7.type.Areas.PE, 0, start_byte, data)
             logging.info(f"Analog input written: byte={start_byte}, size={size}, value={value}")
         except Exception as e:
             logging.error(f"Error writing analog input to PLC: {e}")
@@ -109,7 +110,7 @@ class Plc:
         :return: analog value read
         """
         try:
-            data = self.plc.read_area(snap7.types.Areas.PA, 0, start_byte, size)
+            data = self.plc.read_area(snap7.type.Areas.PA, 0, start_byte, size)
             if size == 2:
                 value = snap7.util.get_int(data, 0)
             elif size == 4:
