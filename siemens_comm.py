@@ -1,7 +1,9 @@
+import trace
 import snap7
 from snap7 import util
 import logging
 import re
+import traceback
 
 class Plc:
     def __init__(self, ip='192.168.0.11', rack=0, slot=1):
@@ -29,6 +31,7 @@ class Plc:
                 logging.error("Failed to connect to PLC")
         except Exception as e:
             logging.error(f"Error connecting to PLC: {e}")
+            traceback.print_exc()
         
     @staticmethod
     def _validate_ip(ip):
@@ -53,7 +56,7 @@ class Plc:
         """
         try:
             data = self.plc.read_area(snap7.type.Areas.PE, 0, plc_byte, 1)
-            snap7.util.set_bool(data, 0, plc_bit, new_value)
+            util.set_bool(data, 0, plc_bit, new_value)
             self.plc.write_area(snap7.type.Areas.PE, 0, plc_byte, data)
             logging.info(f"Input written: byte={plc_byte}, bit={plc_bit}, value={new_value}")
         except Exception as e:
@@ -69,7 +72,7 @@ class Plc:
         """
         try:
             data = self.plc.read_area(snap7.type.Areas.PA, 0, plc_byte, 1)
-            value = snap7.util.get_bool(data, 0, plc_bit)
+            value = util.get_bool(data, 0, plc_bit)
             logging.info(f"Output read: byte={plc_byte}, bit={plc_bit}, value={value}")
             return value
         except Exception as e:
@@ -89,9 +92,9 @@ class Plc:
             data = bytearray(size)
             
             if size == 2:
-                snap7.util.set_int(data, 0, value)
+                util.set_int(data, 0, value)
             elif size == 4:
-                snap7.util.set_dint(data, 0, value)
+                util.set_dint(data, 0, value)
             else:
                 logging.error(f"Invalid size: {size}. Size must be 2 or 4 bytes.")
                 return
@@ -112,9 +115,9 @@ class Plc:
         try:
             data = self.plc.read_area(snap7.type.Areas.PA, 0, start_byte, size)
             if size == 2:
-                value = snap7.util.get_int(data, 0)
+                value = util.get_int(data, 0)
             elif size == 4:
-                value = snap7.util.get_dint(data, 0)
+                value = util.get_dint(data, 0)
             else:
                 logging.error(f"Invalid size: {size}. Size must be 2 or 4 bytes.")
                 return None
